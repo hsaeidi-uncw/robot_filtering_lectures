@@ -6,7 +6,8 @@ from geometry_msgs.msg import Twist
 from turtlesim.msg import Pose
 
 force = 0.0
-vel_cur = float()
+
+pos_cur = float()
 
 # get the force value
 def get_force(data):
@@ -14,8 +15,8 @@ def get_force(data):
 	force = data.linear.x 
 	
 def pose_callback(data):
-	global vel_cur
-	vel_cur = data.linear_velocity
+	global pos_cur
+	pos_cur = data.x
 
 if __name__ == '__main__':
 
@@ -36,17 +37,20 @@ if __name__ == '__main__':
 	# declare a variable of type Twist for sending control commands
 	vel_cmd = Twist()
 	# define the paremeters of the equations 
-	mass = 1 # m in the equations (kg)
-	damping = 0.25 # b in the equations (Ns/m)
-
+	mass = 1.0 # m in the equations (kg)
+	damping = 3 # b in the equations (Ns/m)
 	vel_next = 0.0 # initialize the next velocity
+	pos_prev = 0.0 # initialize the previous position
 	# run this control loop regularly
 	while not rospy.is_shutdown():
+		vel_cur = (pos_cur - pos_prev)/dt
 		vel_next = dt/mass*(force - damping*vel_cur) + vel_cur
+		print('force = ', force, ' (N) and linear velocity=', vel_cur, 'm/s', 'and next velocity=', vel_next, 'm/s')
 		# set the linear (forward/backward) velocity command
 		vel_cmd.linear.x = vel_next
 		# set the angular (heading) velocity command
 		cmd_pub.publish(vel_cmd)
-		
+		# update the pose for next iteration
+		pos_prev = pos_cur
 		# wait for 0.1 seconds until the next loop and repeat
 		loop_rate.sleep()
