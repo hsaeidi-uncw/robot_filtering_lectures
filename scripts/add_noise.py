@@ -22,7 +22,7 @@ if __name__ == '__main__':
 	rospy.init_node('add_noise', anonymous = True)
 	# add a subscriber to it to read the position information
 	pos_sub = rospy.Subscriber('/turtle1/pose', Pose, pose_callback)
-	# add a publisher with a new topic using the Shortpos message
+	# add a publisher for the noisy position data
 	pos_pub = rospy.Publisher('/turtle1/noisy_pose', Pose, queue_size = 10)
 	# set a 10Hz frequency for this loop
 	loop_rate = rospy.Rate(10)
