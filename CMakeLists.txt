@@ -206,3 +206,7 @@ include_directories(
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+
+add_executable(filter_noise_example src/filter_noise_example.cpp)
+target_link_libraries(filter_noise_example ${catkin_LIBRARIES})
